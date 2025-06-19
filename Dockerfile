@@ -1,4 +1,8 @@
-FROM python:3.11-slim
+FROM pytorch/pytorch:2.3.0-cuda12.1-cudnn8-devel
+
+# Ensure CUDA paths are correctly set
+ENV CUDA_HOME=/usr/local/cuda
+ENV PATH="$CUDA_HOME/bin:${PATH}"
 
 # Install system dependencies
 RUN apt-get update && \
