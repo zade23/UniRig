@@ -7,14 +7,24 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Copy repository
-COPY . .
+# Copy only requirements file first to leverage Docker layer caching
+COPY requirements.txt ./
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir torch torchvision \
-    && pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir numpy==1.26.4
+    && pip install --no-cache-dir torch torchvision numpy==1.26.4 packaging
+
+# Install all requirements except flash_attn
+RUN grep -v "^flash_attn" requirements.txt > reqs.txt && \
+    pip install --no-cache-dir -r reqs.txt && \
+    rm reqs.txt
+
+# Install flash_attn separately so errors surface clearly
+RUN pip install --no-cache-dir flash_attn
+
+# Copy the rest of the repository
+COPY . .
+
 
 # Additional packages that require CUDA specific wheels
 # Uncomment and adjust CUDA/Torch versions if GPU support is needed
