@@ -25,6 +25,7 @@ RUN pip install --no-cache-dir flash_attn
 # Copy the rest of the repository
 COPY . .
 
+
 # Additional packages that require CUDA specific wheels
 # Uncomment and adjust CUDA/Torch versions if GPU support is needed
 # RUN pip install --no-cache-dir spconv-cu117
